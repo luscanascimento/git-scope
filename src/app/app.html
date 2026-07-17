@@ -1,0 +1,101 @@
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="nav">
+  <div class="nav__inner container">
+    <a routerLink="/" class="brand" aria-label="Git Scope home">
+      <span class="brand__mark" aria-hidden="true">
+        <gs-icon name="search" [size]="16" />
+      </span>
+      <span class="brand__text">
+        git<span class="brand__accent">scope</span>
+      </span>
+    </a>
+
+    <nav class="nav__links" aria-label="Primary">
+      <a
+        routerLink="/"
+        routerLinkActive="is-active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <gs-icon name="search" [size]="15" />
+        <span>Explore</span>
+      </a>
+      <a routerLink="/compare" routerLinkActive="is-active">
+        <gs-icon name="compare" [size]="15" />
+        <span>Compare</span>
+      </a>
+    </nav>
+
+    <button
+      type="button"
+      class="theme-toggle"
+      (click)="toggleTheme()"
+      [attr.aria-label]="
+        theme() === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'
+      "
+      [attr.aria-pressed]="theme() === 'light'"
+    >
+      @if (theme() === 'dark') {
+        <gs-icon name="sun" [size]="16" />
+      } @else {
+        <gs-icon name="moon" [size]="16" />
+      }
+    </button>
+  </div>
+</header>
+
+<main id="main" class="main">
+  <router-outlet />
+</main>
+
+<!-- Mobile bottom tab bar — small screens only; desktop keeps the top nav. -->
+<nav class="tabbar" aria-label="Primary mobile">
+  <a
+    class="tabbar__item"
+    routerLink="/"
+    routerLinkActive="is-active"
+    [routerLinkActiveOptions]="{ exact: true }"
+  >
+    <gs-icon name="search" [size]="20" />
+    <span class="tabbar__label">Explore</span>
+  </a>
+  <a class="tabbar__item" routerLink="/compare" routerLinkActive="is-active">
+    <gs-icon name="compare" [size]="20" />
+    <span class="tabbar__label">Compare</span>
+  </a>
+  <button
+    type="button"
+    class="tabbar__item"
+    (click)="toggleTheme()"
+    [attr.aria-label]="
+      theme() === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'
+    "
+    [attr.aria-pressed]="theme() === 'light'"
+  >
+    @if (theme() === 'dark') {
+      <gs-icon name="sun" [size]="20" />
+      <span class="tabbar__label">Light</span>
+    } @else {
+      <gs-icon name="moon" [size]="20" />
+      <span class="tabbar__label">Dark</span>
+    }
+  </button>
+</nav>
+
+<footer class="foot">
+  <div class="foot__inner container">
+    <span class="mono foot__brand">git scope</span>
+    <span class="foot__sep">—</span>
+    <span>a GitHub profile &amp; repository explorer</span>
+    <span class="foot__spacer"></span>
+    <a
+      class="foot__link mono"
+      href="https://docs.github.com/en/rest"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      powered by the GitHub REST API
+      <gs-icon name="external" [size]="12" />
+    </a>
+  </div>
+</footer>

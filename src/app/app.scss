@@ -1,0 +1,230 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  height: calc(var(--nav-h) + var(--safe-top));
+  padding-top: var(--safe-top);
+  display: flex;
+  align-items: center;
+  background: color-mix(in srgb, var(--bg-base) 78%, transparent);
+  backdrop-filter: blur(14px) saturate(140%);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.nav__inner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  width: 100%;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: var(--tracking-tight);
+}
+
+.brand__mark {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  box-shadow: 0 4px 16px -4px var(--accent-glow);
+  transition: transform var(--dur-med) var(--ease-spring);
+}
+.brand:hover .brand__mark {
+  transform: rotate(-8deg) scale(1.06);
+}
+
+.brand__accent {
+  color: var(--accent);
+}
+
+.nav__links {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-left: var(--space-4);
+}
+
+.nav__links a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    background var(--dur-fast) var(--ease-out);
+}
+.nav__links a:hover {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+.nav__links a.is-active {
+  color: var(--accent);
+  background: var(--accent-glow);
+}
+
+.theme-toggle {
+  margin-left: auto;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-default);
+  background: var(--bg-surface);
+  transition: all var(--dur-fast) var(--ease-out);
+}
+.theme-toggle:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.main {
+  flex: 1;
+  width: 100%;
+  padding-block: var(--space-6) var(--space-9);
+}
+
+/* ============================================================
+   Mobile bottom tab bar — hidden on desktop.
+   ============================================================ */
+.tabbar {
+  display: none;
+}
+
+.tabbar__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  flex: 1;
+  min-width: var(--tap-target);
+  min-height: var(--tap-target);
+  padding: var(--space-2) var(--space-1);
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  background: none;
+  border: none;
+  border-radius: var(--radius-md);
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    background var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+.tabbar__item gs-icon {
+  transition: transform var(--dur-fast) var(--ease-spring);
+}
+.tabbar__item.is-active {
+  color: var(--accent);
+}
+.tabbar__item.is-active gs-icon {
+  transform: translateY(-1px) scale(1.08);
+}
+/* Tap feedback (mobile has no hover). */
+.tabbar__item:active {
+  transform: scale(0.94);
+  background: var(--bg-hover);
+}
+.tabbar__label {
+  line-height: 1;
+}
+
+/* ============================================================
+   Small-screen switch: top nav → bottom tab bar.
+   ============================================================ */
+@media (max-width: 720px) {
+  .nav__links,
+  .theme-toggle {
+    display: none;
+  }
+  .brand {
+    margin-right: auto;
+  }
+
+  .tabbar {
+    display: flex;
+    align-items: stretch;
+    gap: var(--space-1);
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 50;
+    padding: var(--space-1) var(--space-2);
+    padding-bottom: calc(var(--space-1) + var(--safe-bottom));
+    padding-left: calc(var(--space-2) + var(--safe-left));
+    padding-right: calc(var(--space-2) + var(--safe-right));
+    background: color-mix(in srgb, var(--bg-base) 88%, transparent);
+    backdrop-filter: blur(16px) saturate(140%);
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  /* Condense the top header slightly on phones. */
+  .nav {
+    height: calc(56px + var(--safe-top));
+  }
+}
+
+.foot {
+  border-top: 1px solid var(--border-subtle);
+  padding-block: var(--space-5);
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+@media (max-width: 720px) {
+  // Push the footer clear of the fixed bottom tab bar.
+  .foot {
+    margin-bottom: calc(var(--tabbar-h) + var(--safe-bottom));
+  }
+}
+.foot__inner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+.foot__brand {
+  color: var(--accent);
+  font-weight: 600;
+}
+.foot__sep {
+  color: var(--text-faint);
+}
+.foot__spacer {
+  flex: 1;
+}
+.foot__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+.foot__link:hover {
+  color: var(--accent);
+}

@@ -1,0 +1,150 @@
+<section class="hero container">
+  <p class="hero__eyebrow mono rise">// github, in focus</p>
+  <h1 class="hero__title rise" style="animation-delay: 60ms">
+    Explore any developer's
+    <span class="hero__grad">footprint</span> on GitHub.
+  </h1>
+  <p class="hero__lede rise" style="animation-delay: 120ms">
+    Search profiles, dissect repositories, visualise language distribution, and
+    compare two developers side by side — all from the public GitHub API.
+  </p>
+
+  <div class="search rise" style="animation-delay: 180ms">
+    <div class="search__field">
+      <gs-icon name="search" [size]="18" />
+      <input
+        type="search"
+        class="search__input"
+        [formControl]="query"
+        placeholder="Search GitHub username…"
+        aria-label="Search GitHub username"
+        autocomplete="off"
+        autocapitalize="off"
+        spellcheck="false"
+      />
+      @if (status() === 'loading') {
+        <gs-spinner [size]="18" label="Searching" />
+      }
+    </div>
+
+    <div class="search__hints">
+      <span class="search__hint-label mono">try:</span>
+      @for (s of suggestions; track s) {
+        <button type="button" class="chip mono" (click)="useSuggestion(s)">
+          {{ s }}
+        </button>
+      }
+    </div>
+  </div>
+</section>
+
+<section class="container results" aria-live="polite">
+  @switch (status()) {
+    @case ('idle') {
+      @if (recent().length) {
+        <div class="recent">
+          <div class="recent__head">
+            <h2 class="recent__title mono">
+              <gs-icon name="clock" [size]="14" /> recent
+            </h2>
+            <button type="button" class="recent__clear" (click)="clearRecent()">
+              <gs-icon name="trash" [size]="13" /> clear
+            </button>
+          </div>
+          <ul class="recent__list">
+            @for (login of recent(); track login) {
+              <li>
+                <button
+                  type="button"
+                  class="recent__item"
+                  (click)="openProfile(login)"
+                >
+                  <gs-icon name="user" [size]="14" />
+                  <span class="mono">{{ login }}</span>
+                  <span
+                    class="recent__remove"
+                    role="button"
+                    tabindex="0"
+                    aria-label="Remove {{ login }} from recent"
+                    (click)="removeRecent($event, login)"
+                    (keydown.enter)="removeRecent($event, login)"
+                  >
+                    <gs-icon name="close" [size]="12" />
+                  </span>
+                </button>
+              </li>
+            }
+          </ul>
+        </div>
+      } @else {
+        <gs-empty-state
+          icon="search"
+          title="Start typing to search"
+          message="Search for any GitHub username to view their profile, repositories and language breakdown."
+        />
+      }
+    }
+
+    @case ('loading') {
+      <ul class="grid" aria-hidden="true">
+        @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+          <li class="user-card user-card--skeleton">
+            <gs-skeleton width="48px" height="48px" radius="50%" />
+            <div class="user-card__lines">
+              <gs-skeleton width="60%" height="15px" />
+              <gs-skeleton width="40%" height="12px" />
+            </div>
+          </li>
+        }
+      </ul>
+    }
+
+    @case ('error') {
+      @if (error(); as e) {
+        <gs-error-state [error]="e" (retry)="retry()" />
+      }
+    }
+
+    @case ('empty') {
+      <gs-empty-state
+        icon="user"
+        title="No users found"
+        message="No GitHub accounts matched that query. Check the spelling or try a different name."
+      />
+    }
+
+    @case ('loaded') {
+      <p class="results__count mono">
+        {{ totalCount() | number }} match{{ totalCount() === 1 ? '' : 'es' }}
+        <span class="results__count-dim">— showing top {{ results().length }}</span>
+      </p>
+      <ul class="grid">
+        @for (user of results(); track user.id; let i = $index) {
+          <li class="rise" [style.animation-delay.ms]="i * 40">
+            <a
+              class="user-card"
+              [routerLink]="['/u', user.login]"
+              (click)="openProfile(user.login)"
+            >
+              <img
+                class="user-card__avatar"
+                [src]="user.avatar_url + '&s=96'"
+                [alt]="user.login + ' avatar'"
+                width="48"
+                height="48"
+                loading="lazy"
+              />
+              <div class="user-card__body">
+                <span class="user-card__login mono">{{ user.login }}</span>
+                <span class="user-card__type">{{ user.type }}</span>
+              </div>
+              <span class="user-card__go">
+                <gs-icon name="arrow-right" [size]="16" />
+              </span>
+            </a>
+          </li>
+        }
+      </ul>
+    }
+  }
+</section>
