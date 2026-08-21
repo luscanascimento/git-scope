@@ -23,8 +23,8 @@ unauthenticated rate limit is reached.
 - **User search** — debounced, typo-tolerant search across GitHub accounts with instant results.
 - **Rich profile view** — avatar, bio, followers/following, company, location, website, join date and aggregate stats (repos, stars, forks, gists).
 - **Repository explorer** — client-side search/filter, sort by stars / recent push / forks / name, language badges, topics, "hide forks" toggle and progressive pagination.
-- **DIFFERENTIAL — Language distribution chart** 🍩 An animated, interactive SVG **donut** that aggregates every non-forked repository's primary language across a profile, with a hover-linked legend.
-- **DIFFERENTIAL — Head-to-head compare** ⚔️ Put **two developers side by side** — followers, repo count, total stars, total forks and top-5 languages — with animated bars and an overall verdict.
+- **Language distribution chart** — an animated, interactive SVG donut that aggregates every non-forked repository's primary language across a profile, with a hover-linked legend.
+- **Head-to-head compare** — put two developers side by side (followers, repo count, total stars, total forks and top-5 languages) with animated bars and an overall verdict.
 - **Recent activity feed** — a humanised timeline of a user's public events (pushes, PRs, issues, stars, forks, releases…).
 - **Recent searches** — persisted to `localStorage`, one click to revisit.
 - **Robust states everywhere** — every async path has loading **skeletons**, **empty** states and **specific error handling**, including friendly HTTP **403 (rate limit)** and **404 (not found)** messages.
@@ -62,20 +62,6 @@ a first-class mobile app while keeping the full desktop experience.
   theme in real time.
 - **Pull-to-refresh** — on the profile view, pull down at the top (touch devices)
   to re-fetch the developer's repositories and activity.
-
----
-
-## Screenshots
-
-> The images below are **placeholders** — drop your own captures into `./docs/` with these names.
-
-| Explore / Search | Profile + Language donut |
-| --- | --- |
-| ![Search](./docs/screenshot-1.png) | ![Profile](./docs/screenshot-2.png) |
-
-| Compare (head-to-head) | Light theme |
-| --- | --- |
-| ![Compare](./docs/screenshot-3.png) | ![Light theme](./docs/screenshot-4.png) |
 
 ---
 
@@ -146,11 +132,10 @@ A focused showcase of modern Angular and frontend craft:
 - **`OnPush`** change detection on every component and **`withComponentInputBinding()`** to bind route params straight to component inputs.
 - **TypeScript strict mode** with `noImplicitAny`, `noPropertyAccessFromIndexSignature` and friends — **zero `any`**.
 - **A real design system** — CSS custom-property tokens, a deliberate type scale and spacing rhythm, light/dark theming, tasteful micro-interactions and a distinctive, screenshot-ready look.
-- **Production-grade resilience** — loading skeletons, empty states and specific, user-friendly error handling for rate limits and missing users.
+- **Resilient async UX** — loading skeletons, empty states and specific, user-friendly error handling for rate limits and missing users.
 
 ---
 
 ## License
 
 MIT — free to use as a portfolio reference.
-# git-scope
