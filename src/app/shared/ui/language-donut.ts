@@ -14,7 +14,7 @@ const CIRC = 2 * Math.PI * RADIUS;
 const MAX_SLICES = 8;
 
 /**
- * DIFFERENTIAL — animated donut chart of a user's language distribution,
+ * Animated donut chart of a user's language distribution,
  * aggregated across their non-forked repositories. Interactive legend
  * highlights the corresponding arc.
  */
