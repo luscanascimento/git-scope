@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, forkJoin, map } from 'rxjs';
+import { EMPTY, Observable, expand, forkJoin, map, reduce } from 'rxjs';
 import {
   GithubEvent,
   GithubRepo,
@@ -38,26 +38,34 @@ export class GithubApiService {
   }
 
   /**
-   * Fetches up to `maxRepos` of a user's public repositories, following
-   * pagination. Capped to keep unauthenticated request usage reasonable.
+   * Fetches up to `maxRepos` of a user's public repositories.
+   *
+   * Pages are requested one at a time and the walk stops as soon as a page
+   * comes back short (fewer than {@link REPO_PAGE_SIZE} items), which means
+   * the common case — a user with under 100 repositories — costs a single
+   * request instead of burning the whole 60/hour unauthenticated budget.
    */
   getRepos(login: string, maxRepos = 200): Observable<GithubRepo[]> {
-    const pages = Math.ceil(maxRepos / REPO_PAGE_SIZE);
-    const requests: Observable<GithubRepo[]>[] = [];
-    for (let page = 1; page <= pages; page++) {
-      const params = new HttpParams()
-        .set('per_page', REPO_PAGE_SIZE)
-        .set('page', page)
-        .set('sort', 'updated');
-      requests.push(
-        this.http.get<GithubRepo[]>(
-          `${BASE}/users/${encodeURIComponent(login)}/repos`,
-          { params },
-        ),
-      );
-    }
-    return forkJoin(requests).pipe(
-      map((chunks) => chunks.flat().slice(0, maxRepos)),
+    const maxPages = Math.ceil(maxRepos / REPO_PAGE_SIZE);
+    return this.getRepoPage(login, 1).pipe(
+      expand((repos, i) => {
+        const nextPage = i + 2;
+        const isLastPage = repos.length < REPO_PAGE_SIZE;
+        return isLastPage || nextPage > maxPages ? EMPTY : this.getRepoPage(login, nextPage);
+      }),
+      reduce((all: GithubRepo[], chunk) => all.concat(chunk), []),
+      map((all) => all.slice(0, maxRepos)),
+    );
+  }
+
+  private getRepoPage(login: string, page: number): Observable<GithubRepo[]> {
+    const params = new HttpParams()
+      .set('per_page', REPO_PAGE_SIZE)
+      .set('page', page)
+      .set('sort', 'updated');
+    return this.http.get<GithubRepo[]>(
+      `${BASE}/users/${encodeURIComponent(login)}/repos`,
+      { params },
     );
   }
 
