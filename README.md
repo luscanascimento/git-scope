@@ -20,7 +20,7 @@ unauthenticated rate limit is reached.
 
 ## Features
 
-- **User search** — debounced, typo-tolerant search across GitHub accounts with instant results.
+- **User search** — debounced queries against GitHub's `/search/users` endpoint, rendered as you type.
 - **Rich profile view** — avatar, bio, followers/following, company, location, website, join date and aggregate stats (repos, stars, forks, gists).
 - **Repository explorer** — client-side search/filter, sort by stars / recent push / forks / name, language badges, topics, "hide forks" toggle and progressive pagination.
 - **Language distribution chart** — an animated, interactive SVG donut that aggregates every non-forked repository's primary language across a profile, with a hover-linked legend.
@@ -85,6 +85,16 @@ npm start
 # → http://localhost:4200
 ```
 
+### Test
+
+```bash
+npx ng test --watch=false --browsers=ChromeHeadless
+```
+
+Unit tests cover the GitHub error interceptor (rate limit, 404, 422, offline),
+the username route guard (GitHub's naming rules) and the paginated repository
+fetch. The same command runs in CI (`.github/workflows/ci.yml`).
+
 ### Production build
 
 ```bash
@@ -131,7 +141,7 @@ A focused showcase of modern Angular and frontend craft:
 - **Typed reactive forms**, **functional route guards**, **functional HTTP interceptors** and **`inject()`-based DI**.
 - **`OnPush`** change detection on every component and **`withComponentInputBinding()`** to bind route params straight to component inputs.
 - **TypeScript strict mode** with `noImplicitAny`, `noPropertyAccessFromIndexSignature` and friends — **zero `any`**.
-- **A real design system** — CSS custom-property tokens, a deliberate type scale and spacing rhythm, light/dark theming, tasteful micro-interactions and a distinctive, screenshot-ready look.
+- **A real design system** — CSS custom-property tokens, a deliberate type scale and spacing rhythm, light/dark theming and reduced-motion-aware micro-interactions.
 - **Resilient async UX** — loading skeletons, empty states and specific, user-friendly error handling for rate limits and missing users.
 
 ---
