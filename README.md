@@ -93,8 +93,12 @@ npx ng test --watch=false --browsers=ChromeHeadless
 ```
 
 Unit tests cover the GitHub error interceptor (rate limit, 404, 422, offline),
-the username route guard (GitHub's naming rules) and the paginated repository
-fetch. The same command runs in CI (`.github/workflows/ci.yml`).
+the username route guard (GitHub's naming rules), the paginated repository
+fetch, the debounce/retry semantics of the search stream, the pull-to-refresh
+gesture, and the pure derived state of the profile and compare pages
+(`filteredRepos()`, `eventVerb()`, `verdict()`, `barWidth()`). The same command
+runs in CI (`.github/workflows/ci.yml`), alongside `prettier --check` and a
+production build.
 
 ### Production build
 
