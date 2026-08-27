@@ -50,9 +50,10 @@ a first-class mobile app while keeping the full desktop experience.
 - **Mobile navigation** — on small screens the top nav collapses into a
   fixed **bottom tab bar** (Explore · Compare · theme toggle) with large touch
   targets; the desktop top nav is untouched at wider breakpoints.
-- **Touch-friendly** — every control is at least **44×44px**, taps get instant
-  active-state feedback (no 300ms delay or grey flash), momentum scrolling is
-  enabled, and inputs never trigger iOS zoom-on-focus.
+- **Touch-friendly** — interactive controls are held to a **44×44px** minimum on
+  small screens (the `--tap-target` token), taps get instant active-state
+  feedback (`touch-action: manipulation`, no grey flash), momentum scrolling is
+  enabled, and inputs are forced to ≥16px so iOS never zooms on focus.
 - **Safe-area aware** — layout honours `env(safe-area-inset-*)` so content clears
   notches and the home indicator (`viewport-fit=cover`).
 - **Reflows on small screens** — the language donut, comparison bars/tables and
@@ -137,7 +138,7 @@ A focused showcase of modern Angular and frontend craft:
 
 - **Latest Angular (v20)** — 100% **standalone** components (no NgModules), **lazy-loaded** feature routes and `loadComponent`.
 - **Signals-first state** — `signal`, `computed` and `effect` drive all view state; RxJS is used only where it genuinely shines (debounced search streams, parallel `forkJoin` requests).
-- **New control flow** — `@if` / `@for` / `@switch` / `@let` throughout, with `track` on every loop.
+- **New control flow** — `@if` / `@for` / `@switch` throughout, with `track` on every loop.
 - **Typed reactive forms**, **functional route guards**, **functional HTTP interceptors** and **`inject()`-based DI**.
 - **`OnPush`** change detection on every component and **`withComponentInputBinding()`** to bind route params straight to component inputs.
 - **TypeScript strict mode** with `noImplicitAny`, `noPropertyAccessFromIndexSignature` and friends — **zero `any`**.
