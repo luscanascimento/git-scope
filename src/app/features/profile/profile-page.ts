@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
-import { catchError, forkJoin, of } from 'rxjs';
+import { Observable, catchError, forkJoin, of } from 'rxjs';
 import { GithubApiService } from '../../core/services/github-api.service';
 import { RecentSearchesService } from '../../core/services/recent-searches.service';
 import { totalForks as sumForks, totalStars as sumStars } from '../../core/github';
@@ -35,6 +35,12 @@ import { RelativeTimePipe } from '../../shared/pipes/relative-time.pipe';
 
 type Status = 'loading' | 'loaded' | 'error';
 const PAGE_SIZE = 9;
+
+interface ProfileData {
+  readonly user: GithubUser;
+  readonly repos: readonly GithubRepo[];
+  readonly events: readonly GithubEvent[];
+}
 
 @Component({
   selector: 'gs-profile-page',
@@ -143,6 +149,31 @@ export class ProfilePage {
     });
   }
 
+  /**
+   * The three requests behind a profile view as one stream. The activity feed
+   * is optional — a user with no public events (or a 404 on that endpoint)
+   * must not take the whole page down with it.
+   */
+  private fetchProfile(login: string): Observable<ProfileData | { error: ApiError }> {
+    return forkJoin({
+      user: this.api.getUser(login),
+      repos: this.api.getRepos(login, 200),
+      events: this.api.getEvents(login).pipe(catchError(() => of([] as GithubEvent[]))),
+    }).pipe(
+      catchError((err: unknown) => of({ error: err as ApiError })),
+      takeUntilDestroyed(this.destroyRef),
+    );
+  }
+
+  private applyProfile(data: ProfileData): void {
+    this.user.set(data.user);
+    this.repos.set(data.repos);
+    this.events.set(data.events);
+    this.languages.set(this.api.computeLanguageStats(data.repos));
+    this.error.set(null);
+    this.status.set('loaded');
+  }
+
   private load(login: string): void {
     this.status.set('loading');
     this.error.set(null);
@@ -153,28 +184,15 @@ export class ProfilePage {
     this.filter.set('');
     this.visibleCount.set(PAGE_SIZE);
 
-    forkJoin({
-      user: this.api.getUser(login),
-      repos: this.api.getRepos(login, 200),
-      events: this.api.getEvents(login).pipe(catchError(() => of([] as GithubEvent[]))),
-    })
-      .pipe(
-        catchError((err: unknown) => of({ error: err as ApiError })),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((result) => {
-        if ('error' in result) {
-          this.error.set(result.error);
-          this.status.set('error');
-          return;
-        }
-        this.user.set(result.user);
-        this.repos.set(result.repos);
-        this.events.set(result.events);
-        this.languages.set(this.api.computeLanguageStats(result.repos));
-        this.recentSvc.add(result.user.login);
-        this.status.set('loaded');
-      });
+    this.fetchProfile(login).subscribe((result) => {
+      if ('error' in result) {
+        this.error.set(result.error);
+        this.status.set('error');
+        return;
+      }
+      this.applyProfile(result);
+      this.recentSvc.add(result.user.login);
+    });
   }
 
   setSort(value: string): void {
@@ -205,29 +223,16 @@ export class ProfilePage {
    * view down to skeletons, then retract the pull indicator once settled.
    */
   onRefresh(): void {
-    forkJoin({
-      user: this.api.getUser(this.login()),
-      repos: this.api.getRepos(this.login(), 200),
-      events: this.api.getEvents(this.login()).pipe(catchError(() => of([] as GithubEvent[]))),
-    })
-      .pipe(
-        catchError((err: unknown) => of({ error: err as ApiError })),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((result) => {
-        if (!('error' in result)) {
-          this.user.set(result.user);
-          this.repos.set(result.repos);
-          this.events.set(result.events);
-          this.languages.set(this.api.computeLanguageStats(result.repos));
-          this.status.set('loaded');
-        } else if (this.user() === null) {
-          // Only surface the error state if we have nothing to show.
-          this.error.set(result.error);
-          this.status.set('error');
-        }
-        this.ptr()?.done();
-      });
+    this.fetchProfile(this.login()).subscribe((result) => {
+      if (!('error' in result)) {
+        this.applyProfile(result);
+      } else if (this.user() === null) {
+        // Only surface the error state if we have nothing to show.
+        this.error.set(result.error);
+        this.status.set('error');
+      }
+      this.ptr()?.done();
+    });
   }
 
   // ---- Activity feed helpers --------------------------------
