@@ -58,6 +58,27 @@ describe('SearchPage', () => {
     retryReq.flush({ total_count: 0, incomplete_results: false, items: [] });
   }));
 
+  it('clears previous results when the term drops below the 2-char floor', fakeAsync(() => {
+    search('octocat');
+    httpMock
+      .expectOne((r) => r.url === SEARCH_URL)
+      .flush({
+        total_count: 42,
+        incomplete_results: false,
+        items: [{ id: 1, login: 'octocat', avatar_url: '', html_url: '', type: 'User' }],
+      });
+    expect(page['status']()).toBe('loaded');
+
+    // Backspacing down to one character is not searched — but the octocat hits
+    // must not stay on screen next to a query that no longer matches them.
+    search('o');
+
+    expect(httpMock.match(() => true).length).toBe(0);
+    expect(page['status']()).toBe('idle');
+    expect(page['results']()).toEqual([]);
+    expect(page['totalCount']()).toBe(0);
+  }));
+
   it('does not request anything when retry() runs with an empty query', fakeAsync(() => {
     page.retry();
     tick(DEBOUNCE);

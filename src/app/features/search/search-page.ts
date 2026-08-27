@@ -26,6 +26,9 @@ import { Skeleton } from '../../shared/ui/skeleton';
 
 type Status = 'idle' | 'loading' | 'loaded' | 'empty' | 'error';
 
+/** Shortest term worth spending one of the 60 unauthenticated requests on. */
+const MIN_QUERY_LENGTH = 2;
+
 @Component({
   selector: 'gs-search-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -76,13 +79,15 @@ export class SearchPage {
     )
       .pipe(
         filter((v) => {
-          if (v.length === 0) {
-            this.status.set('idle');
-            this.results.set([]);
-            this.error.set(null);
-            return false;
-          }
-          return v.length >= 2;
+          if (v.length >= MIN_QUERY_LENGTH) return true;
+          // Anything below the floor is not searched, so the previous term's
+          // hits (and its total count) have to go with it — otherwise the page
+          // keeps rendering results that no longer match what is in the box.
+          this.status.set('idle');
+          this.results.set([]);
+          this.totalCount.set(0);
+          this.error.set(null);
+          return false;
         }),
         switchMap((v) => {
           this.status.set('loading');
