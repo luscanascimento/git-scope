@@ -14,6 +14,7 @@ import { RouterLink } from '@angular/router';
 import { catchError, forkJoin, of } from 'rxjs';
 import { GithubApiService } from '../../core/services/github-api.service';
 import { RecentSearchesService } from '../../core/services/recent-searches.service';
+import { totalForks as sumForks, totalStars as sumStars } from '../../core/github';
 import { ApiError } from '../../core/models/api-error';
 import {
   GithubEvent,
@@ -85,17 +86,8 @@ export class ProfilePage {
   ];
 
   // ---- Derived aggregates -----------------------------------
-  protected readonly totalStars = computed(() =>
-    this.repos()
-      .filter((r) => !r.fork)
-      .reduce((s, r) => s + r.stargazers_count, 0),
-  );
-
-  protected readonly totalForks = computed(() =>
-    this.repos()
-      .filter((r) => !r.fork)
-      .reduce((s, r) => s + r.forks_count, 0),
-  );
+  protected readonly totalStars = computed(() => sumStars(this.repos()));
+  protected readonly totalForks = computed(() => sumForks(this.repos()));
 
   protected readonly filteredRepos = computed<readonly GithubRepo[]>(() => {
     const term = this.filter().trim().toLowerCase();
@@ -120,9 +112,7 @@ export class ProfilePage {
         case 'name':
           return a.name.localeCompare(b.name);
         case 'updated':
-          return (
-            new Date(b.pushed_at).getTime() - new Date(a.pushed_at).getTime()
-          );
+          return new Date(b.pushed_at).getTime() - new Date(a.pushed_at).getTime();
       }
     });
     return list;
@@ -132,9 +122,7 @@ export class ProfilePage {
     this.filteredRepos().slice(0, this.visibleCount()),
   );
 
-  protected readonly hasMore = computed(
-    () => this.visibleCount() < this.filteredRepos().length,
-  );
+  protected readonly hasMore = computed(() => this.visibleCount() < this.filteredRepos().length);
 
   protected readonly memberSince = computed(() => {
     const u = this.user();
@@ -220,9 +208,7 @@ export class ProfilePage {
     forkJoin({
       user: this.api.getUser(this.login()),
       repos: this.api.getRepos(this.login(), 200),
-      events: this.api
-        .getEvents(this.login())
-        .pipe(catchError(() => of([] as GithubEvent[]))),
+      events: this.api.getEvents(this.login()).pipe(catchError(() => of([] as GithubEvent[]))),
     })
       .pipe(
         catchError((err: unknown) => of({ error: err as ApiError })),
@@ -276,7 +262,9 @@ export class ProfilePage {
     }
   }
 
-  eventIcon(event: GithubEvent): 'commit' | 'pr' | 'issue' | 'star' | 'fork' | 'tag' | 'branch' | 'repo' {
+  eventIcon(
+    event: GithubEvent,
+  ): 'commit' | 'pr' | 'issue' | 'star' | 'fork' | 'tag' | 'branch' | 'repo' {
     switch (event.type) {
       case 'PushEvent':
         return 'commit';

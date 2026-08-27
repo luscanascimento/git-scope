@@ -151,8 +151,13 @@
   align-items: center;
   gap: var(--space-4);
   padding: var(--space-5);
-  background:
-    linear-gradient(90deg, var(--accent-glow), transparent 40%, transparent 60%, color-mix(in srgb, var(--cyan) 12%, transparent));
+  background: linear-gradient(
+    90deg,
+    var(--accent-glow),
+    transparent 40%,
+    transparent 60%,
+    color-mix(in srgb, var(--cyan) 12%, transparent)
+  );
   border-bottom: 1px solid var(--border-subtle);
 }
 .player {

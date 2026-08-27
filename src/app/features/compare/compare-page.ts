@@ -9,14 +9,10 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DecimalPipe } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { forkJoin, catchError, of } from 'rxjs';
 import { GithubApiService } from '../../core/services/github-api.service';
+import { USERNAME_RE } from '../../core/github';
 import { ApiError } from '../../core/models/api-error';
 import { UserSnapshot } from '../../core/models/github.models';
 import { Icon } from '../../shared/ui/icon';
@@ -53,16 +49,14 @@ export class ComparePage {
   private readonly destroyRef = inject(DestroyRef);
   private readonly route = inject(ActivatedRoute);
 
-  private static readonly NAME = /^[a-zA-Z\d](?:[a-zA-Z\d]|-(?=[a-zA-Z\d])){0,38}$/;
-
   readonly form = new FormGroup({
     a: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.pattern(ComparePage.NAME)],
+      validators: [Validators.required, Validators.pattern(USERNAME_RE)],
     }),
     b: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.pattern(ComparePage.NAME)],
+      validators: [Validators.required, Validators.pattern(USERNAME_RE)],
     }),
   });
 

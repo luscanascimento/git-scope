@@ -36,9 +36,7 @@ export class ThemeService {
    */
   private syncThemeColor(value: Theme): void {
     if (typeof document === 'undefined') return;
-    let meta = document.querySelector<HTMLMetaElement>(
-      'meta[name="theme-color"]:not([media])',
-    );
+    let meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]:not([media])');
     if (!meta) {
       meta = document.createElement('meta');
       meta.name = 'theme-color';
@@ -59,8 +57,7 @@ export class ThemeService {
       /* ignore */
     }
     const prefersLight =
-      typeof window !== 'undefined' &&
-      window.matchMedia?.('(prefers-color-scheme: light)').matches;
+      typeof window !== 'undefined' && window.matchMedia?.('(prefers-color-scheme: light)').matches;
     return prefersLight ? 'light' : 'dark';
   }
 }

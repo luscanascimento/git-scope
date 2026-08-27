@@ -15,5 +15,6 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - run: npm run format:check
       - run: npx ng test --watch=false --browsers=ChromeHeadless
       - run: npx ng build

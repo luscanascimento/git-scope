@@ -39,8 +39,8 @@ unauthenticated rate limit is reached.
 Git Scope is an **installable Progressive Web App** and is optimised to feel like
 a first-class mobile app while keeping the full desktop experience.
 
-- **Add to Home Screen** — install it from your browser (Chrome/Edge: *Install app*;
-  iOS Safari: *Share → Add to Home Screen*) to launch it full-screen in
+- **Add to Home Screen** — install it from your browser (Chrome/Edge: _Install app_;
+  iOS Safari: _Share → Add to Home Screen_) to launch it full-screen in
   `standalone` display mode with its own icon and splash colours.
 - **Offline app-shell** — an [Angular service worker](https://angular.dev/ecosystem/service-workers)
   (`@angular/service-worker`, configured in `ngsw-config.json`) prefetches the

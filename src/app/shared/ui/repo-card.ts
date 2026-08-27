@@ -13,12 +13,7 @@ import { Icon } from './icon';
   template: `
     <article class="repo">
       <div class="repo__head">
-        <a
-          class="repo__name"
-          [href]="repo().html_url"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <a class="repo__name" [href]="repo().html_url" target="_blank" rel="noopener noreferrer">
           <gs-icon name="repo" [size]="15" />
           <span>{{ repo().name }}</span>
           <gs-icon name="external" [size]="12" />

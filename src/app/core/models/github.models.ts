@@ -109,9 +109,3 @@ export interface UserSnapshot {
 }
 
 export type RepoSort = 'updated' | 'stars' | 'name' | 'forks';
-
-export interface RateLimitInfo {
-  readonly limit: number;
-  readonly remaining: number;
-  readonly reset: number;
-}

@@ -1,311 +1,307 @@
 <gs-pull-to-refresh (refresh)="onRefresh()">
-<div class="container">
-  <a routerLink="/" class="back mono">
-    <gs-icon name="arrow-right" [size]="14" /> back to search
-  </a>
-</div>
+  <div class="container">
+    <a routerLink="/" class="back mono">
+      <gs-icon name="arrow-right" [size]="14" /> back to search
+    </a>
+  </div>
 
-@switch (status()) {
-  <!-- ============ LOADING ============ -->
-  @case ('loading') {
-    <div class="container profile__grid">
-      <aside class="side">
-        <div class="pcard">
-          <gs-skeleton width="112px" height="112px" radius="24px" />
-          <gs-skeleton width="70%" height="22px" />
-          <gs-skeleton width="45%" height="14px" />
-          <gs-skeleton width="100%" height="40px" radius="10px" />
-          <gs-skeleton width="100%" height="60px" radius="10px" />
-        </div>
-      </aside>
-      <div class="content">
-        <gs-skeleton width="200px" height="20px" />
-        <div class="repos__grid" style="margin-top: 1.5rem">
-          @for (row of skeletonRows; track row) {
-            <div class="repo-skel">
-              <gs-skeleton width="50%" height="16px" />
-              <gs-skeleton width="90%" height="13px" />
-              <gs-skeleton width="60%" height="13px" />
-            </div>
-          }
-        </div>
-      </div>
-    </div>
-  }
-
-  <!-- ============ ERROR ============ -->
-  @case ('error') {
-    @if (error(); as e) {
-      <div class="container">
-        <gs-error-state [error]="e" (retry)="retry()" />
-      </div>
-    }
-  }
-
-  <!-- ============ LOADED ============ -->
-  @case ('loaded') {
-    @if (user(); as u) {
-      <div class="container profile__grid rise">
-        <!-- ---- Sidebar: identity card ---- -->
+  @switch (status()) {
+    <!-- ============ LOADING ============ -->
+    @case ('loading') {
+      <div class="container profile__grid">
         <aside class="side">
           <div class="pcard">
-            <div class="pcard__avatar-wrap">
-              <img
-                class="pcard__avatar"
-                [src]="u.avatar_url + '&s=224'"
-                [alt]="u.login + ' avatar'"
-                width="112"
-                height="112"
-              />
-              <span class="pcard__type mono">{{ u.type }}</span>
-            </div>
+            <gs-skeleton width="112px" height="112px" radius="24px" />
+            <gs-skeleton width="70%" height="22px" />
+            <gs-skeleton width="45%" height="14px" />
+            <gs-skeleton width="100%" height="40px" radius="10px" />
+            <gs-skeleton width="100%" height="60px" radius="10px" />
+          </div>
+        </aside>
+        <div class="content">
+          <gs-skeleton width="200px" height="20px" />
+          <div class="repos__grid" style="margin-top: 1.5rem">
+            @for (row of skeletonRows; track row) {
+              <div class="repo-skel">
+                <gs-skeleton width="50%" height="16px" />
+                <gs-skeleton width="90%" height="13px" />
+                <gs-skeleton width="60%" height="13px" />
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    }
 
-            <div class="pcard__id">
-              @if (u.name) {
-                <h1 class="pcard__name">{{ u.name }}</h1>
+    <!-- ============ ERROR ============ -->
+    @case ('error') {
+      @if (error(); as e) {
+        <div class="container">
+          <gs-error-state [error]="e" (retry)="retry()" />
+        </div>
+      }
+    }
+
+    <!-- ============ LOADED ============ -->
+    @case ('loaded') {
+      @if (user(); as u) {
+        <div class="container profile__grid rise">
+          <!-- ---- Sidebar: identity card ---- -->
+          <aside class="side">
+            <div class="pcard">
+              <div class="pcard__avatar-wrap">
+                <img
+                  class="pcard__avatar"
+                  [src]="u.avatar_url + '&s=224'"
+                  [alt]="u.login + ' avatar'"
+                  width="112"
+                  height="112"
+                />
+                <span class="pcard__type mono">{{ u.type }}</span>
+              </div>
+
+              <div class="pcard__id">
+                @if (u.name) {
+                  <h1 class="pcard__name">{{ u.name }}</h1>
+                }
+                <a
+                  class="pcard__login mono"
+                  [href]="u.html_url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  &#64;{{ u.login }}
+                </a>
+              </div>
+
+              @if (u.bio) {
+                <p class="pcard__bio">{{ u.bio }}</p>
               }
-              <a
-                class="pcard__login mono"
-                [href]="u.html_url"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                &#64;{{ u.login }}
+
+              <div class="pcard__follow">
+                <span class="follow">
+                  <gs-icon name="users" [size]="14" />
+                  <strong>{{ u.followers | compactNumber }}</strong> followers
+                </span>
+                <span class="follow-sep">·</span>
+                <span class="follow">
+                  <strong>{{ u.following | compactNumber }}</strong> following
+                </span>
+              </div>
+
+              <ul class="pcard__meta">
+                @if (u.company) {
+                  <li><gs-icon name="building" [size]="14" /> {{ u.company }}</li>
+                }
+                @if (u.location) {
+                  <li><gs-icon name="location" [size]="14" /> {{ u.location }}</li>
+                }
+                @if (u.blog) {
+                  <li>
+                    <gs-icon name="link" [size]="14" />
+                    <a
+                      [href]="u.blog.startsWith('http') ? u.blog : 'https://' + u.blog"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >{{ u.blog }}</a
+                    >
+                  </li>
+                }
+                @if (u.twitter_username) {
+                  <li>
+                    <gs-icon name="twitter" [size]="14" />
+                    <a
+                      [href]="'https://twitter.com/' + u.twitter_username"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >&#64;{{ u.twitter_username }}</a
+                    >
+                  </li>
+                }
+                <li><gs-icon name="calendar" [size]="14" /> joined {{ memberSince() }}</li>
+              </ul>
+
+              <a class="pcard__cta" [routerLink]="['/compare']" [queryParams]="{ a: u.login }">
+                <gs-icon name="compare" [size]="15" /> Compare this developer
               </a>
             </div>
 
-            @if (u.bio) {
-              <p class="pcard__bio">{{ u.bio }}</p>
+            <!-- ---- Stats strip ---- -->
+            <div class="stats">
+              <div class="stat">
+                <gs-icon name="repo" [size]="15" />
+                <span class="stat__num mono">{{ u.public_repos | compactNumber }}</span>
+                <span class="stat__label">repos</span>
+              </div>
+              <div class="stat">
+                <gs-icon name="star" [size]="15" />
+                <span class="stat__num mono">{{ totalStars() | compactNumber }}</span>
+                <span class="stat__label">stars</span>
+              </div>
+              <div class="stat">
+                <gs-icon name="fork" [size]="15" />
+                <span class="stat__num mono">{{ totalForks() | compactNumber }}</span>
+                <span class="stat__label">forks</span>
+              </div>
+              <div class="stat">
+                <gs-icon name="code" [size]="15" />
+                <span class="stat__num mono">{{ u.public_gists | compactNumber }}</span>
+                <span class="stat__label">gists</span>
+              </div>
+            </div>
+          </aside>
+
+          <!-- ---- Main content ---- -->
+          <div class="content">
+            <!-- Language distribution donut -->
+            @if (languages().length) {
+              <section class="panel">
+                <div class="panel__head">
+                  <h2 class="panel__title">
+                    <span class="panel__kicker mono">01</span> Language distribution
+                  </h2>
+                  <p class="panel__sub">Across {{ repos().length }} public repositories</p>
+                </div>
+                <gs-language-donut [stats]="languages()" />
+              </section>
             }
 
-            <div class="pcard__follow">
-              <span class="follow">
-                <gs-icon name="users" [size]="14" />
-                <strong>{{ u.followers | compactNumber }}</strong> followers
-              </span>
-              <span class="follow-sep">·</span>
-              <span class="follow">
-                <strong>{{ u.following | compactNumber }}</strong> following
-              </span>
-            </div>
+            <!-- Repositories -->
+            <section class="panel">
+              <div class="repos__head">
+                <h2 class="panel__title">
+                  <span class="panel__kicker mono">02</span> Repositories
+                  <span class="repos__count mono">{{ filteredRepos().length }}</span>
+                </h2>
 
-            <ul class="pcard__meta">
-              @if (u.company) {
-                <li><gs-icon name="building" [size]="14" /> {{ u.company }}</li>
-              }
-              @if (u.location) {
-                <li><gs-icon name="location" [size]="14" /> {{ u.location }}</li>
-              }
-              @if (u.blog) {
-                <li>
-                  <gs-icon name="link" [size]="14" />
-                  <a
-                    [href]="u.blog.startsWith('http') ? u.blog : 'https://' + u.blog"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    >{{ u.blog }}</a
+                <div class="repos__controls">
+                  <div class="repos__search">
+                    <gs-icon name="search" [size]="15" />
+                    <input
+                      type="search"
+                      placeholder="Filter repositories…"
+                      aria-label="Filter repositories"
+                      [value]="filter()"
+                      (input)="onFilter($any($event.target).value)"
+                      autocomplete="off"
+                    />
+                  </div>
+
+                  <button
+                    type="button"
+                    class="repos__fork-toggle"
+                    [class.is-on]="hideForks()"
+                    (click)="toggleForks()"
+                    [attr.aria-pressed]="hideForks()"
                   >
-                </li>
+                    <gs-icon name="fork" [size]="13" /> hide forks
+                  </button>
+
+                  <label class="repos__sort">
+                    <gs-icon name="sort" [size]="15" />
+                    <select
+                      aria-label="Sort repositories"
+                      [value]="sort()"
+                      (change)="setSort($any($event.target).value)"
+                    >
+                      @for (opt of sortOptions; track opt.value) {
+                        <option [value]="opt.value">{{ opt.label }}</option>
+                      }
+                    </select>
+                    <gs-icon name="chevron-down" [size]="14" />
+                  </label>
+                </div>
+              </div>
+
+              @if (filteredRepos().length === 0) {
+                @if (repos().length === 0) {
+                  <gs-empty-state
+                    icon="repo"
+                    title="No public repositories"
+                    message="This user hasn't published any public repositories yet."
+                  />
+                } @else {
+                  <gs-empty-state
+                    icon="search"
+                    title="No matches"
+                    [message]="'No repositories match “' + filter() + '”.'"
+                  />
+                }
+              } @else {
+                <ul class="repos__grid">
+                  @for (repo of visibleRepos(); track repo.id; let i = $index) {
+                    <li class="rise" [style.animation-delay.ms]="i * 30">
+                      <gs-repo-card [repo]="repo" />
+                    </li>
+                  }
+                </ul>
+
+                @if (hasMore()) {
+                  <div class="repos__more">
+                    <button type="button" class="load-more" (click)="showMore()">
+                      Load more repositories
+                      <span class="mono"
+                        >({{ visibleRepos().length }}/{{ filteredRepos().length }})</span
+                      >
+                    </button>
+                  </div>
+                }
               }
-              @if (u.twitter_username) {
-                <li>
-                  <gs-icon name="twitter" [size]="14" />
-                  <a
-                    [href]="'https://twitter.com/' + u.twitter_username"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    >&#64;{{ u.twitter_username }}</a
-                  >
-                </li>
-              }
-              <li>
-                <gs-icon name="calendar" [size]="14" /> joined {{ memberSince() }}
-              </li>
-            </ul>
+            </section>
 
-            <a
-              class="pcard__cta"
-              [routerLink]="['/compare']"
-              [queryParams]="{ a: u.login }"
-            >
-              <gs-icon name="compare" [size]="15" /> Compare this developer
-            </a>
-          </div>
-
-          <!-- ---- Stats strip ---- -->
-          <div class="stats">
-            <div class="stat">
-              <gs-icon name="repo" [size]="15" />
-              <span class="stat__num mono">{{ u.public_repos | compactNumber }}</span>
-              <span class="stat__label">repos</span>
-            </div>
-            <div class="stat">
-              <gs-icon name="star" [size]="15" />
-              <span class="stat__num mono">{{ totalStars() | compactNumber }}</span>
-              <span class="stat__label">stars</span>
-            </div>
-            <div class="stat">
-              <gs-icon name="fork" [size]="15" />
-              <span class="stat__num mono">{{ totalForks() | compactNumber }}</span>
-              <span class="stat__label">forks</span>
-            </div>
-            <div class="stat">
-              <gs-icon name="code" [size]="15" />
-              <span class="stat__num mono">{{ u.public_gists | compactNumber }}</span>
-              <span class="stat__label">gists</span>
-            </div>
-          </div>
-        </aside>
-
-        <!-- ---- Main content ---- -->
-        <div class="content">
-          <!-- Language distribution donut -->
-          @if (languages().length) {
+            <!-- Activity feed -->
             <section class="panel">
               <div class="panel__head">
                 <h2 class="panel__title">
-                  <span class="panel__kicker mono">01</span> Language distribution
+                  <span class="panel__kicker mono">03</span> Recent activity
                 </h2>
-                <p class="panel__sub">
-                  Across {{ repos().length }} public repositories
-                </p>
               </div>
-              <gs-language-donut [stats]="languages()" />
-            </section>
-          }
 
-          <!-- Repositories -->
-          <section class="panel">
-            <div class="repos__head">
-              <h2 class="panel__title">
-                <span class="panel__kicker mono">02</span> Repositories
-                <span class="repos__count mono">{{ filteredRepos().length }}</span>
-              </h2>
-
-              <div class="repos__controls">
-                <div class="repos__search">
-                  <gs-icon name="search" [size]="15" />
-                  <input
-                    type="search"
-                    placeholder="Filter repositories…"
-                    aria-label="Filter repositories"
-                    [value]="filter()"
-                    (input)="onFilter($any($event.target).value)"
-                    autocomplete="off"
-                  />
-                </div>
-
-                <button
-                  type="button"
-                  class="repos__fork-toggle"
-                  [class.is-on]="hideForks()"
-                  (click)="toggleForks()"
-                  [attr.aria-pressed]="hideForks()"
-                >
-                  <gs-icon name="fork" [size]="13" /> hide forks
-                </button>
-
-                <label class="repos__sort">
-                  <gs-icon name="sort" [size]="15" />
-                  <select
-                    aria-label="Sort repositories"
-                    [value]="sort()"
-                    (change)="setSort($any($event.target).value)"
-                  >
-                    @for (opt of sortOptions; track opt.value) {
-                      <option [value]="opt.value">{{ opt.label }}</option>
-                    }
-                  </select>
-                  <gs-icon name="chevron-down" [size]="14" />
-                </label>
-              </div>
-            </div>
-
-            @if (filteredRepos().length === 0) {
-              @if (repos().length === 0) {
+              @if (events().length === 0) {
                 <gs-empty-state
-                  icon="repo"
-                  title="No public repositories"
-                  message="This user hasn't published any public repositories yet."
+                  icon="clock"
+                  title="No recent public activity"
+                  message="This user has no public events in the recent window."
                 />
               } @else {
-                <gs-empty-state
-                  icon="search"
-                  title="No matches"
-                  [message]="'No repositories match “' + filter() + '”.'"
-                />
+                <ol class="feed">
+                  @for (event of events(); track event.id) {
+                    <li class="feed__item">
+                      <span class="feed__icon" aria-hidden="true">
+                        <gs-icon [name]="eventIcon(event)" [size]="13" />
+                      </span>
+                      <div class="feed__body">
+                        <p class="feed__text">
+                          {{ eventVerb(event) }}
+                          <a
+                            class="feed__repo mono"
+                            [href]="'https://github.com/' + event.repo.name"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >{{ event.repo.name }}</a
+                          >
+                        </p>
+                        @if (event.payload.commits?.[0]?.message; as msg) {
+                          <p class="feed__detail mono">{{ msg }}</p>
+                        } @else if (event.payload.pull_request?.title; as pr) {
+                          <p class="feed__detail">
+                            #{{ event.payload.pull_request?.number }} · {{ pr }}
+                          </p>
+                        } @else if (event.payload.issue?.title; as issue) {
+                          <p class="feed__detail">
+                            #{{ event.payload.issue?.number }} · {{ issue }}
+                          </p>
+                        }
+                      </div>
+                      <time class="feed__time mono">{{ event.created_at | relativeTime }}</time>
+                    </li>
+                  }
+                </ol>
               }
-            } @else {
-              <ul class="repos__grid">
-                @for (repo of visibleRepos(); track repo.id; let i = $index) {
-                  <li class="rise" [style.animation-delay.ms]="i * 30">
-                    <gs-repo-card [repo]="repo" />
-                  </li>
-                }
-              </ul>
-
-              @if (hasMore()) {
-                <div class="repos__more">
-                  <button type="button" class="load-more" (click)="showMore()">
-                    Load more repositories
-                    <span class="mono"
-                      >({{ visibleRepos().length }}/{{ filteredRepos().length }})</span
-                    >
-                  </button>
-                </div>
-              }
-            }
-          </section>
-
-          <!-- Activity feed -->
-          <section class="panel">
-            <div class="panel__head">
-              <h2 class="panel__title">
-                <span class="panel__kicker mono">03</span> Recent activity
-              </h2>
-            </div>
-
-            @if (events().length === 0) {
-              <gs-empty-state
-                icon="clock"
-                title="No recent public activity"
-                message="This user has no public events in the recent window."
-              />
-            } @else {
-              <ol class="feed">
-                @for (event of events(); track event.id) {
-                  <li class="feed__item">
-                    <span class="feed__icon" aria-hidden="true">
-                      <gs-icon [name]="eventIcon(event)" [size]="13" />
-                    </span>
-                    <div class="feed__body">
-                      <p class="feed__text">
-                        {{ eventVerb(event) }}
-                        <a
-                          class="feed__repo mono"
-                          [href]="'https://github.com/' + event.repo.name"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          >{{ event.repo.name }}</a
-                        >
-                      </p>
-                      @if (event.payload.commits?.[0]?.message; as msg) {
-                        <p class="feed__detail mono">{{ msg }}</p>
-                      } @else if (event.payload.pull_request?.title; as pr) {
-                        <p class="feed__detail">#{{ event.payload.pull_request?.number }} · {{ pr }}</p>
-                      } @else if (event.payload.issue?.title; as issue) {
-                        <p class="feed__detail">#{{ event.payload.issue?.number }} · {{ issue }}</p>
-                      }
-                    </div>
-                    <time class="feed__time mono">{{ event.created_at | relativeTime }}</time>
-                  </li>
-                }
-              </ol>
-            }
-          </section>
+            </section>
+          </div>
         </div>
-      </div>
+      }
     }
   }
-}
 </gs-pull-to-refresh>

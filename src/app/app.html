@@ -6,17 +6,11 @@
       <span class="brand__mark" aria-hidden="true">
         <gs-icon name="search" [size]="16" />
       </span>
-      <span class="brand__text">
-        git<span class="brand__accent">scope</span>
-      </span>
+      <span class="brand__text"> git<span class="brand__accent">scope</span> </span>
     </a>
 
     <nav class="nav__links" aria-label="Primary">
-      <a
-        routerLink="/"
-        routerLinkActive="is-active"
-        [routerLinkActiveOptions]="{ exact: true }"
-      >
+      <a routerLink="/" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: true }">
         <gs-icon name="search" [size]="15" />
         <span>Explore</span>
       </a>
@@ -30,9 +24,7 @@
       type="button"
       class="theme-toggle"
       (click)="toggleTheme()"
-      [attr.aria-label]="
-        theme() === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'
-      "
+      [attr.aria-label]="theme() === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'"
       [attr.aria-pressed]="theme() === 'light'"
     >
       @if (theme() === 'dark') {
@@ -67,9 +59,7 @@
     type="button"
     class="tabbar__item"
     (click)="toggleTheme()"
-    [attr.aria-label]="
-      theme() === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'
-    "
+    [attr.aria-label]="theme() === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'"
     [attr.aria-pressed]="theme() === 'light'"
   >
     @if (theme() === 'dark') {

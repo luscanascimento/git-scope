@@ -5,8 +5,8 @@
     <span class="hero__grad">footprint</span> on GitHub.
   </h1>
   <p class="hero__lede rise" style="animation-delay: 120ms">
-    Search profiles, dissect repositories, visualise language distribution, and
-    compare two developers side by side — all from the public GitHub API.
+    Search profiles, dissect repositories, visualise language distribution, and compare two
+    developers side by side — all from the public GitHub API.
   </p>
 
   <div class="search rise" style="animation-delay: 180ms">
@@ -44,9 +44,7 @@
       @if (recent().length) {
         <div class="recent">
           <div class="recent__head">
-            <h2 class="recent__title mono">
-              <gs-icon name="clock" [size]="14" /> recent
-            </h2>
+            <h2 class="recent__title mono"><gs-icon name="clock" [size]="14" /> recent</h2>
             <button type="button" class="recent__clear" (click)="clearRecent()">
               <gs-icon name="trash" [size]="13" /> clear
             </button>
@@ -54,11 +52,7 @@
           <ul class="recent__list">
             @for (login of recent(); track login) {
               <li>
-                <button
-                  type="button"
-                  class="recent__item"
-                  (click)="openProfile(login)"
-                >
+                <button type="button" class="recent__item" (click)="openProfile(login)">
                   <gs-icon name="user" [size]="14" />
                   <span class="mono">{{ login }}</span>
                   <span

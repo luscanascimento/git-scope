@@ -1,8 +1,10 @@
-import { HttpClient, HttpErrorResponse, provideHttpClient, withInterceptors } from '@angular/common/http';
 import {
-  HttpTestingController,
-  provideHttpClientTesting,
-} from '@angular/common/http/testing';
+  HttpClient,
+  HttpErrorResponse,
+  provideHttpClient,
+  withInterceptors,
+} from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
 import { ApiError } from '../models/api-error';
@@ -155,10 +157,7 @@ describe('githubErrorInterceptor', () => {
 
   it('passes non-GitHub failures through untouched', () => {
     const url = 'https://example.com/health';
-    const err = failWith(
-      (req) => req.flush('down', { status: 404, statusText: 'Not Found' }),
-      url,
-    );
+    const err = failWith((req) => req.flush('down', { status: 404, statusText: 'Not Found' }), url);
 
     expect(err).toBeInstanceOf(HttpErrorResponse);
     expect(err).not.toBeInstanceOf(ApiError);

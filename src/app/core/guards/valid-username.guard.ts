@@ -1,8 +1,6 @@
 import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
-
-/** GitHub username rules: alphanumeric or single hyphens, max 39 chars. */
-const USERNAME_RE = /^[a-zA-Z\d](?:[a-zA-Z\d]|-(?=[a-zA-Z\d])){0,38}$/;
+import { USERNAME_RE } from '../github';
 
 /**
  * Functional route guard: rejects obviously invalid usernames before an

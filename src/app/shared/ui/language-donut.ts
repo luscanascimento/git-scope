@@ -26,12 +26,7 @@ const MAX_SLICES = 8;
     <div class="donut">
       <div class="donut__chart">
         <svg viewBox="0 0 150 150" role="img" [attr.aria-label]="ariaLabel()">
-          <circle
-            class="donut__track"
-            cx="75"
-            cy="75"
-            [attr.r]="radius"
-          />
+          <circle class="donut__track" cx="75" cy="75" [attr.r]="radius" />
           @for (arc of arcs(); track arc.stat.language; let i = $index) {
             <circle
               class="donut__arc"
@@ -221,9 +216,7 @@ export class LanguageDonut {
     ];
   });
 
-  protected readonly total = computed(() =>
-    this.stats().reduce((s, l) => s + l.count, 0),
-  );
+  protected readonly total = computed(() => this.stats().reduce((s, l) => s + l.count, 0));
 
   protected readonly arcs = computed<Arc[]>(() => {
     let cumulative = 0;

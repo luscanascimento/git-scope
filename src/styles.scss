@@ -34,7 +34,8 @@ body {
   background: var(--bg-base);
   min-height: 100dvh;
   overflow-x: hidden;
-  transition: background var(--dur-med) var(--ease-out),
+  transition:
+    background var(--dur-med) var(--ease-out),
     color var(--dur-med) var(--ease-out);
 }
 
@@ -67,7 +68,11 @@ body::after {
   pointer-events: none;
 }
 
-h1, h2, h3, h4, h5 {
+h1,
+h2,
+h3,
+h4,
+h5 {
   font-family: var(--font-display);
   font-weight: 700;
   line-height: var(--leading-snug);
@@ -129,7 +134,8 @@ img {
   max-width: 100%;
 }
 
-ul, ol {
+ul,
+ol {
   list-style: none;
 }
 

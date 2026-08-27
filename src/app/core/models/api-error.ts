@@ -1,10 +1,5 @@
 /** Discriminated, UI-friendly error surface for GitHub API failures. */
-export type ApiErrorKind =
-  | 'not-found'
-  | 'rate-limit'
-  | 'forbidden'
-  | 'network'
-  | 'unknown';
+export type ApiErrorKind = 'not-found' | 'rate-limit' | 'forbidden' | 'network' | 'unknown';
 
 export class ApiError {
   constructor(

@@ -95,6 +95,7 @@ export class PullToRefresh {
 
   private startY = 0;
   private tracking = false;
+  private retract: ReturnType<typeof setTimeout> | null = null;
 
   private static readonly THRESHOLD = 72;
   private static readonly MAX = 96;
@@ -135,7 +136,9 @@ export class PullToRefresh {
       this.armed.set(false);
       this.refresh.emit();
       // Auto-retract as a safety net if the parent forgets to call done().
-      setTimeout(() => this.done(), 6000);
+      // One timer at a time: rapid pulls must not stack them.
+      this.clearRetract();
+      this.retract = setTimeout(() => this.done(), 6000);
     } else {
       this.reset();
     }
@@ -148,15 +151,19 @@ export class PullToRefresh {
   }
 
   private reset(): void {
+    this.clearRetract();
     this.pull.set(0);
     this.armed.set(false);
   }
 
+  private clearRetract(): void {
+    if (this.retract !== null) {
+      clearTimeout(this.retract);
+      this.retract = null;
+    }
+  }
+
   private scrollTop(): number {
-    return (
-      document.scrollingElement?.scrollTop ??
-      document.documentElement.scrollTop ??
-      0
-    );
+    return document.scrollingElement?.scrollTop ?? document.documentElement.scrollTop ?? 0;
   }
 }

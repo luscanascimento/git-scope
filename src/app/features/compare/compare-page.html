@@ -1,11 +1,9 @@
 <section class="container head">
   <p class="head__eyebrow mono rise">// head to head</p>
-  <h1 class="head__title rise" style="animation-delay: 60ms">
-    Compare two developers.
-  </h1>
+  <h1 class="head__title rise" style="animation-delay: 60ms">Compare two developers.</h1>
   <p class="head__lede rise" style="animation-delay: 120ms">
-    Put any two GitHub accounts side by side — followers, repositories, total
-    stars, forks and their leading languages.
+    Put any two GitHub accounts side by side — followers, repositories, total stars, forks and their
+    leading languages.
   </p>
 
   <form class="vs rise" [formGroup]="form" (ngSubmit)="compare()" style="animation-delay: 160ms">
@@ -92,12 +90,19 @@
                 [class.player--win]="verdict() === 'a'"
                 [routerLink]="['/u', a.user.login]"
               >
-                <img [src]="a.user.avatar_url + '&s=128'" [alt]="a.user.login" width="64" height="64" />
+                <img
+                  [src]="a.user.avatar_url + '&s=128'"
+                  [alt]="a.user.login"
+                  width="64"
+                  height="64"
+                />
                 <div>
                   <span class="player__name">{{ a.user.name || a.user.login }}</span>
                   <span class="player__login mono">&#64;{{ a.user.login }}</span>
                 </div>
-                @if (verdict() === 'a') { <span class="player__crown mono">winner</span> }
+                @if (verdict() === 'a') {
+                  <span class="player__crown mono">winner</span>
+                }
               </a>
 
               <span class="board__vs mono" aria-hidden="true">vs</span>
@@ -107,12 +112,19 @@
                 [class.player--win]="verdict() === 'b'"
                 [routerLink]="['/u', b.user.login]"
               >
-                @if (verdict() === 'b') { <span class="player__crown mono">winner</span> }
+                @if (verdict() === 'b') {
+                  <span class="player__crown mono">winner</span>
+                }
                 <div class="player__txt-r">
                   <span class="player__name">{{ b.user.name || b.user.login }}</span>
                   <span class="player__login mono">&#64;{{ b.user.login }}</span>
                 </div>
-                <img [src]="b.user.avatar_url + '&s=128'" [alt]="b.user.login" width="64" height="64" />
+                <img
+                  [src]="b.user.avatar_url + '&s=128'"
+                  [alt]="b.user.login"
+                  width="64"
+                  height="64"
+                />
               </a>
             </header>
 
@@ -120,11 +132,9 @@
             <ul class="metrics">
               @for (m of metrics(); track m.label) {
                 <li class="metric">
-                  <span
-                    class="metric__val metric__val--a mono"
-                    [class.is-win]="m.a > m.b"
-                    >{{ m.a | compactNumber }}</span
-                  >
+                  <span class="metric__val metric__val--a mono" [class.is-win]="m.a > m.b">{{
+                    m.a | compactNumber
+                  }}</span>
                   <div class="metric__center">
                     <span class="metric__label">
                       <gs-icon [name]="m.icon" [size]="13" /> {{ m.label }}
@@ -146,11 +156,9 @@
                       </div>
                     </div>
                   </div>
-                  <span
-                    class="metric__val metric__val--b mono"
-                    [class.is-win]="m.b > m.a"
-                    >{{ m.b | compactNumber }}</span
-                  >
+                  <span class="metric__val metric__val--b mono" [class.is-win]="m.b > m.a">{{
+                    m.b | compactNumber
+                  }}</span>
                 </li>
               }
             </ul>

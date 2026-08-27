@@ -13,7 +13,6 @@ import { Icon } from './shared/ui/icon';
 export class App {
   private readonly themeService = inject(ThemeService);
   protected readonly theme = this.themeService.theme;
-  protected readonly year = new Date().getFullYear();
 
   toggleTheme(): void {
     this.themeService.toggle();

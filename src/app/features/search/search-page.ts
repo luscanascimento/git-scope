@@ -1,20 +1,16 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  inject,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DecimalPipe } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import {
+  Subject,
   catchError,
   debounceTime,
   distinctUntilChanged,
   filter,
   map,
+  merge,
   of,
   switchMap,
 } from 'rxjs';
@@ -54,25 +50,31 @@ export class SearchPage {
 
   readonly query = new FormControl<string>('', { nonNullable: true });
 
+  /**
+   * Explicit retry trigger. It bypasses the debounce/distinctUntilChanged on
+   * the typed-input branch, which would otherwise swallow a re-request for a
+   * term the user has not changed.
+   */
+  private readonly retry$ = new Subject<string>();
+
   protected readonly status = signal<Status>('idle');
   protected readonly results = signal<readonly UserSearchResult[]>([]);
   protected readonly totalCount = signal(0);
   protected readonly error = signal<ApiError | null>(null);
   protected readonly recent = this.recentSvc.recent;
 
-  protected readonly suggestions = [
-    'torvalds',
-    'gaearon',
-    'sindresorhus',
-    'addyosmani',
-  ];
+  protected readonly suggestions = ['torvalds', 'gaearon', 'sindresorhus', 'addyosmani'];
 
   constructor() {
-    this.query.valueChanges
-      .pipe(
+    merge(
+      this.query.valueChanges.pipe(
         map((v) => v.trim()),
         debounceTime(350),
         distinctUntilChanged(),
+      ),
+      this.retry$,
+    )
+      .pipe(
         filter((v) => {
           if (v.length === 0) {
             this.status.set('idle');
@@ -87,9 +89,7 @@ export class SearchPage {
           this.error.set(null);
           return this.api.searchUsers(v).pipe(
             map((res) => ({ ok: true as const, res })),
-            catchError((err: unknown) =>
-              of({ ok: false as const, err: err as ApiError }),
-            ),
+            catchError((err: unknown) => of({ ok: false as const, err: err as ApiError })),
           );
         }),
         takeUntilDestroyed(this.destroyRef),
@@ -125,8 +125,6 @@ export class SearchPage {
   }
 
   retry(): void {
-    const value = this.query.value.trim();
-    this.query.setValue('');
-    this.query.setValue(value);
+    this.retry$.next(this.query.value.trim());
   }
 }

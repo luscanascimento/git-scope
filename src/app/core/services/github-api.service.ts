@@ -9,6 +9,7 @@ import {
   UserSearchResponse,
   UserSnapshot,
 } from '../models/github.models';
+import { ownedRepos, totalForks, totalStars } from '../github';
 import { languageColor } from './language-color';
 
 const BASE = 'https://api.github.com';
@@ -63,10 +64,9 @@ export class GithubApiService {
       .set('per_page', REPO_PAGE_SIZE)
       .set('page', page)
       .set('sort', 'updated');
-    return this.http.get<GithubRepo[]>(
-      `${BASE}/users/${encodeURIComponent(login)}/repos`,
-      { params },
-    );
+    return this.http.get<GithubRepo[]>(`${BASE}/users/${encodeURIComponent(login)}/repos`, {
+      params,
+    });
   }
 
   getEvents(login: string, perPage = 30): Observable<GithubEvent[]> {
@@ -104,19 +104,15 @@ export class GithubApiService {
       repos: this.getRepos(login, 200),
     }).pipe(
       map(({ user, repos }) => {
-        const owned = repos.filter((r) => !r.fork);
-        const totalStars = owned.reduce((s, r) => s + r.stargazers_count, 0);
-        const totalForks = owned.reduce((s, r) => s + r.forks_count, 0);
+        const owned = ownedRepos(repos);
         const topRepo =
           owned.length > 0
-            ? owned.reduce((best, r) =>
-                r.stargazers_count > best.stargazers_count ? r : best,
-              )
+            ? owned.reduce((best, r) => (r.stargazers_count > best.stargazers_count ? r : best))
             : null;
         return {
           user,
-          totalStars,
-          totalForks,
+          totalStars: totalStars(repos),
+          totalForks: totalForks(repos),
           languages: this.computeLanguageStats(repos),
           topRepo,
         } satisfies UserSnapshot;
